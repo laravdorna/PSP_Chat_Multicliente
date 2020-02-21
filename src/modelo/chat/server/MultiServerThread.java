@@ -1,5 +1,6 @@
 package modelo.chat.server;
 
+
 import java.io.*;
 import java.net.*;
 import java.sql.SQLException;
@@ -63,6 +64,25 @@ public class MultiServerThread extends Thread {
                     passwd = content.substring(content.indexOf(' ') + 1);
                     //user = content;
                     try {
+                        //me conecto a base de datos y compruebo en el DAO si existe el usuario, si no existe lo crea
+                        ServerDAO serverdao = new ServerDAO();
+                        List<Usuario> usuarios = serverdao.getUsuarios();
+                       // System.out.println(usuarios);
+
+                        Usuario u = new Usuario();
+                        u.setNick(user);
+                        
+                       // usuarioRegistrado = serverdao.getUsuario(u);//comprueba si el usuario existe y devuelve el usuario de la db
+                       // System.out.println("Usuario registrado: " + usuarioRegistrado);
+
+                        //si el usuario no existe lo da de alta el la db
+                        if (usuarioRegistrado == null) {
+                           // boolean creado = serverdao.altaUsuario(u);
+                            //una vez creado lo lee de la db
+                         //   if (creado) {
+                               // usuarioRegistrado = serverdao.getUsuario(u);
+                            }
+                        }
 
                         //añade el usuario a la lista de conectados y se lo envias al cliente
                         userName = user;
@@ -101,53 +121,51 @@ public class MultiServerThread extends Thread {
 
                             user = stream.substring(0, stream.indexOf(' '));
                             passwd = stream.substring(stream.indexOf(' ') + 1);
-
+                            ServerDAO serverdao = new ServerDAO();
                             Usuario u = new Usuario();
                             u.setNick(user);
                             u.setPassword(passwd);
+                            boolean modifica = serverdao.modificarUsuario(u);
+                            //me conecto a base de datos, compruebo en el DAO, y actualizo
+                            if (modifica) {
+                                usuarioRegistrado = u;
+                            }
                     }
+                } else {
                     serverMessage = "[" + userName + "]: " + clientMessage;
                     server.broadcast(serverMessage, this);
                     server.saveToFile(serverMessage, this);
-
                 }
-            }
-                while (!salir);
+            } while (!salir);
 
-                server.removeUser(userName, this);
-                socket.close();
+            server.removeUser(userName, this);
+            socket.close();
 
-                //  printUsers(); // tengo que cambiar como imprime los usuarios??
-                
-                serverMessage = userName + " ha dejado el chat.";
-                server.broadcast(serverMessage, this);
+            printUsers();
+            serverMessage = userName + " ha dejado el chat.";
+            server.broadcast(serverMessage, this);
 
-            } catch (IOException ex) {   
+        } catch (IOException ex) {
             Logger.getLogger(MultiServerThread.class.getName()).log(Level.SEVERE, null, ex);
-        }   
         }
+    }
 
-            /**
-             * Envía una lista de usuarios en línea al usuario recién conectado.
-             */
-            void printUsers
-            
-                () {
+    /**
+     * Envía una lista de usuarios en línea al usuario recién conectado.
+     */
+    void printUsers() {
         if (server.hasUsers()) {
-                    server.broadcast("/users " + String.join(",", server.getUserNames()), this);
-                    writer.println("/users " + String.join(",", server.getUserNames()));
-                } else {
-                    writer.println("No hay otros usuarios conectados");
-                }
-            }
-
-            /**
-             * Envia el mensaje al cliente.
-             */
-            void sendMessage
-            (String message
-            
-                ) {
-        writer.println(message);
-            }
+            server.broadcast("/users " + String.join(",", server.getUserNames()), this);
+            writer.println("/users " + String.join(",", server.getUserNames()));
+        } else {
+            writer.println("No hay otros usuarios conectados");
         }
+    }
+
+    /**
+     * Envia el mensaje al cliente.
+     */
+    void sendMessage(String message) {
+        writer.println(message);
+    }
+}
