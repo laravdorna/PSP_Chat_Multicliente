@@ -172,8 +172,6 @@ public class Inicio extends javax.swing.JFrame {
             reader = new BufferedReader(streamreader);
             writer = new PrintWriter(sock.getOutputStream());
             nick = TF_Nick.getText();
-            String password = new String(TF_Password.getPassword());
-            writer.println("/login " + nick + " " + password);// debe ir nombre y password separados por espacios para comprobar log en bd
             writer.flush();
 
             Dlg_Chat chat = new Dlg_Chat(this, true);
