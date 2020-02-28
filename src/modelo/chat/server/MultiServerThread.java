@@ -1,6 +1,5 @@
 package modelo.chat.server;
 
-
 import java.io.*;
 import java.net.*;
 import java.sql.SQLException;
@@ -9,20 +8,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import modelo.Usuario;
+import modelo.Usuarios;
 
 /**
  * Este hilo es responsable de leer la entrada del servidor e imprimirla en
  * consola. Se ejecuta en un bucle infinito hasta que el cliente se desconecta
  * del servidor.
  *
- * @author Juan Martinez Piñeiro y Lara Vázquez Dorna
+ * @author Lara Vazquez Dorna
  */
 public class MultiServerThread extends Thread {
 
     private Socket socket;
     private Server server;
     private PrintWriter writer;
-    private Usuario usuarioRegistrado;
 
     /**
      * Constructor. crea un servidor y un socket
@@ -58,31 +57,17 @@ public class MultiServerThread extends Thread {
                 if (cmd.equalsIgnoreCase("login")) {
 
                     String user = "";
-                    String passwd = "";
 
                     user = content.substring(0, content.indexOf(' '));
-                    passwd = content.substring(content.indexOf(' ') + 1);
-                    //user = content;
+
+                    user = content;
                     try {
-                        //me conecto a base de datos y compruebo en el DAO si existe el usuario, si no existe lo crea
-                        ServerDAO serverdao = new ServerDAO();
-                        List<Usuario> usuarios = serverdao.getUsuarios();
-                       // System.out.println(usuarios);
+                        // Usuarios us = new Usuarios();
+                        // List<Usuario> usuarios = us.getUsuarios();
+                        // System.out.println(usuarios);
 
                         Usuario u = new Usuario();
                         u.setNick(user);
-                        
-                       // usuarioRegistrado = serverdao.getUsuario(u);//comprueba si el usuario existe y devuelve el usuario de la db
-                       // System.out.println("Usuario registrado: " + usuarioRegistrado);
-
-                        //si el usuario no existe lo da de alta el la db
-                        if (usuarioRegistrado == null) {
-                           // boolean creado = serverdao.altaUsuario(u);
-                            //una vez creado lo lee de la db
-                         //   if (creado) {
-                               // usuarioRegistrado = serverdao.getUsuario(u);
-                            }
-                        }
 
                         //añade el usuario a la lista de conectados y se lo envias al cliente
                         userName = user;
@@ -96,6 +81,10 @@ public class MultiServerThread extends Thread {
                     } catch (Exception ex) {
                         Logger.getLogger(MultiServerThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } else if (cmd.equalsIgnoreCase("logout")) {
+                    String serverMessage = "El  usuario: " + userName + "ha dejado el chat";
+                    server.broadcast(serverMessage, this);
+                    server.saveToFile(serverMessage, this);
 
                 }
             }
@@ -107,35 +96,11 @@ public class MultiServerThread extends Thread {
 
                 clientMessage = reader.readLine();
                 System.out.println(clientMessage);
-                if (clientMessage.startsWith("/")) {
-                    String cmd = clientMessage.substring(1, clientMessage.indexOf(' '));
-                    System.out.println(cmd);
-                    switch (cmd) {
-                        case "logout":
-                            salir = true;
-                            break;
-                        case "update":
-                            String content = clientMessage.substring(clientMessage.indexOf(' ') + 1);
-                            String user = "";
-                            String passwd = "";
 
-                            user = stream.substring(0, stream.indexOf(' '));
-                            passwd = stream.substring(stream.indexOf(' ') + 1);
-                            ServerDAO serverdao = new ServerDAO();
-                            Usuario u = new Usuario();
-                            u.setNick(user);
-                            u.setPassword(passwd);
-                            boolean modifica = serverdao.modificarUsuario(u);
-                            //me conecto a base de datos, compruebo en el DAO, y actualizo
-                            if (modifica) {
-                                usuarioRegistrado = u;
-                            }
-                    }
-                } else {
-                    serverMessage = "[" + userName + "]: " + clientMessage;
-                    server.broadcast(serverMessage, this);
-                    server.saveToFile(serverMessage, this);
-                }
+                serverMessage = "[" + userName + "]: " + clientMessage;
+                server.broadcast(serverMessage, this);
+                server.saveToFile(serverMessage, this);
+
             } while (!salir);
 
             server.removeUser(userName, this);
@@ -165,7 +130,8 @@ public class MultiServerThread extends Thread {
     /**
      * Envia el mensaje al cliente.
      */
-    void sendMessage(String message) {
+    void sendMessage(String message
+    ) {
         writer.println(message);
     }
 }

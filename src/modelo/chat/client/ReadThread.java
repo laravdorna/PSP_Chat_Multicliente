@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * consola. Se ejecuta en un bucle infinito hasta que el cliente se desconecta
  * del servidor.
  *
- * @author Juan Martinez Piñeiro y Lara Vázquez Dorna
+ * @author Lara Vazquez Dorna
  */
 public class ReadThread extends Thread {
 

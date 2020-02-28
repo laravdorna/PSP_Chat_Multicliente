@@ -16,7 +16,7 @@ import modelo.Usuario;
  * Este es el programa del servidor de chat. Presione Ctrl + C para terminar el
  * programa.
  *
- * @author Juan Martinez Piñeiro y Lara Vázquez Dorna
+ * @author Lara Vazquez Dorna
  */
 public class Server {
 

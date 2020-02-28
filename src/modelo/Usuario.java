@@ -7,7 +7,7 @@ package modelo;
 
 /**
  *
- * @author EliteDesk
+ * @author Lara Vazquez Dorna
  */
 public class Usuario {
 

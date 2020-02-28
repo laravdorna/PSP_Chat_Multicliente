@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Cliente del programa Tipo 'chao' para salir del chat.
  *
- * @author Juan Martinez Piñeiro y Lara Vázquez Dorna
+ * @author Lara Vazquez Dorna
  */
 public class Client {
 

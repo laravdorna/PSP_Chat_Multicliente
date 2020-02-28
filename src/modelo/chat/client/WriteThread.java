@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * Se ejecuta en un bucle infinito hasta que el usuario escribe 'chao' para
  * salir.
  *
- * @author Juan Martinez Piñeiro y Lara Vázquez Dorna
+ * @author Lara Vazquez Dorna
  */
 public class WriteThread extends Thread {
 

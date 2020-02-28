@@ -15,7 +15,7 @@ import javax.swing.ListModel;
 
 /**
  *
- * @author EliteDesk
+ * @author Lara Vazquez Dorna
  */
 public class Dlg_Chat extends javax.swing.JDialog {
 
